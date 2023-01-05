@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página principal</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">MySocketChat</h1>
+    </header>
+    <div class="chat">
+        <div class="chat-area" id="chat-area">
+
+        </div>
+    </div>
+    <div class="form">
+        <button class="form-send" id="sendBtn">Enviar</button>
+        <input type="text" class="form-username" id="username" placeholder="Insira seu nome aqui">
+        <input type="color" class="form-usercolor" id="usercolor">
+        <input type="text" class="form-message" id="message" placeholder="Insira sua mensagem aqui">
+    </div>
+</body>
+<script>
+    const sendBtn = document.getElementById('sendBtn');
+    const username = document.getElementById('username');
+    const usercolor = document.getElementById('usercolor');
+    const message = document.getElementById('message');
+    var socket = io('http://localhost:3000');
+    socket.on('showMsg', (res)=>{
+       var chat = document.getElementById('chat-area');
+       chat.innerHTML += `<p><span style="color: ${res.usercolor};">${res.username}</span>: ${res.message}</p>`;
+    })
+    sendBtn.addEventListener('click', ()=>{
+        
+        if(!username.value){
+            username.value = "Anônimo";
+        }
+
+        if(!message.value){
+            message.value = "Sou bobo, ENVIEI UMA MENSAGEM VAZIA :)";
+        }
+
+
+        socket.emit('sendMsg', 
+            {
+                username: username.value, 
+                usercolor: usercolor.value, 
+                message: message.value
+            }
+        );    
+    });
+
+</script>
+</html>
